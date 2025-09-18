@@ -1,0 +1,527 @@
+.register-page {
+    padding: 40px 0 80px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 40px;
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    }
+
+    .register-form-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        margin-bottom: 40px;
+    }
+
+    .form-progress {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gray-200);
+            z-index: 1;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+
+            .step-number {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: white;
+                border: 2px solid var(--gray-300);
+                color: var(--gray-500);
+                font-weight: 600;
+                margin: 0 auto 8px;
+                transition: all 0.3s ease;
+            }
+
+            .step-label {
+                font-size: 0.875rem;
+                color: var(--gray-500);
+                font-weight: 500;
+            }
+
+            &.active {
+                .step-number {
+                    background: var(--primary);
+                    border-color: var(--primary);
+                    color: white;
+                }
+
+                .step-label {
+                    color: var(--primary);
+                }
+            }
+
+            &.completed {
+                .step-number {
+                    background: var(--success);
+                    border-color: var(--success);
+                    color: white;
+                }
+
+                .step-label {
+                    color: var(--success);
+                }
+            }
+        }
+    }
+
+    .form-step {
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+
+            &:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            }
+
+            &.error {
+                border-color: var(--error);
+            }
+
+            &::placeholder {
+                color: var(--gray-400);
+            }
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 6px;
+        }
+
+        .success-message {
+            color: #10b981;
+            font-size: 0.875rem;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .password-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+
+            input {
+                padding-right: 45px; // Make room for the toggle button
+            }
+
+            .password-toggle-btn {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 4px;
+                border-radius: 4px;
+                color: #6b7280;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &:hover {
+                    background: #f3f4f6;
+                    color: #374151;
+                }
+
+                &:focus {
+                    outline: 2px solid #10b981;
+                    outline-offset: 2px;
+                }
+
+                .eye-icon {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+
+        @media (max-width: 640px) {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+    }
+
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 16px;
+        margin-top: 8px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        color: var(--gray-700);
+
+        input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        span {
+            user-select: none;
+        }
+    }
+
+    .form-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+        padding-top: 24px;
+        border-top: 1px solid var(--gray-200);
+
+        @media (max-width: 640px) {
+            flex-direction: column;
+            gap: 16px;
+        }
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 120px;
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        &.btn-primary {
+            background: var(--primary);
+            color: white;
+
+            &:hover:not(:disabled) {
+                background: var(--primary-dark);
+                transform: translateY(-2px);
+            }
+        }
+
+        &.btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+
+            &:hover:not(:disabled) {
+                background: var(--gray-200);
+            }
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .register-page {
+        padding: 20px 0 60px;
+
+        .register-form-container {
+            padding: 24px;
+            margin: 0 10px 30px;
+        }
+
+        .form-progress {
+            .progress-step {
+                .step-label {
+                    font-size: 0.75rem;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .register-page {
+        .register-header {
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+
+        .form-progress {
+            flex-direction: column;
+            gap: 20px;
+
+            &::before {
+                display: none;
+            }
+
+            .progress-step {
+                .step-number {
+                    margin-bottom: 4px;
+                }
+            }
+        }
+    }
+}
+
+// Image Upload Styles
+.image-upload-container {
+    .image-preview {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border: 2px dashed #d1d5db;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+
+        &.has-image {
+            border-color: #10b981;
+            border-style: solid;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .placeholder-image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #6b7280;
+
+            .placeholder-icon {
+                width: 32px;
+                height: 32px;
+                margin-bottom: 8px;
+            }
+
+            .placeholder-text {
+                font-size: 0.8rem;
+                font-weight: 500;
+            }
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: #dc2626;
+                transform: scale(1.1);
+            }
+
+            svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
+    }
+
+    .upload-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background: #f9fafb;
+                border-color: #9ca3af;
+            }
+
+            .upload-icon {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        .upload-hint {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-left: 4px;
+        }
+    }
+
+    .error-message {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        &::before {
+            content: "⚠️";
+            font-size: 0.9rem;
+        }
+    }
+
+    .success-message {
+        color: #10b981;
+        font-size: 0.8rem;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 500;
+    }
+}
+
+// Responsive design for image upload
+@media (max-width: 768px) {
+    .image-upload-container {
+        .image-preview {
+            width: 100px;
+            height: 100px;
+        }
+
+        .upload-actions {
+            .upload-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
+
+    .password-input-container {
+        .password-toggle-btn {
+            right: 8px;
+            padding: 6px;
+
+            .eye-icon {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        input {
+            padding-right: 40px;
+        }
+    }
+}

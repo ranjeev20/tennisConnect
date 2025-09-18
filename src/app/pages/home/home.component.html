@@ -1,0 +1,88 @@
+<app-header></app-header>
+
+<main class="home-page">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Connect with Tennis Players in
+          <span class="highlight">Rotterdam</span>
+        </h1>
+        <p class="hero-description">
+          Find the perfect tennis partner, discover local courts, and join a thriving community of players. 
+          Whether you're a beginner or an expert, TennisConnect makes it easy to get on the court.
+        </p>
+        <div class="hero-actions">
+          <a routerLink="/find-partner" class="btn btn-primary">
+            <span class="btn-icon">🎾</span>
+            Find a Partner
+          </a>
+          <a routerLink="/find-court" class="btn btn-secondary">
+            <span class="btn-icon">🏟️</span>
+            Find a Court
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="tennis-court">
+          <div class="court-lines"></div>
+          <div class="tennis-ball"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Everything You Need to Play Tennis</h2>
+        <p>Our platform provides all the tools to enhance your tennis experience</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card" *ngFor="let feature of features">
+          <div class="feature-icon">{{ feature.icon }}</div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+          <a [routerLink]="feature.link" class="feature-link">
+            Learn More
+            <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item" *ngFor="let stat of stats">
+          <div class="stat-number">{{ stat.number }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Start Playing?</h2>
+        <p>Join thousands of tennis players in Rotterdam and start your journey today.</p>
+        <div class="cta-actions">
+          <a routerLink="/register" class="btn btn-primary btn-large">
+            Get Started Now
+          </a>
+          <a routerLink="/about" class="btn btn-outline btn-large">
+            Learn More
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

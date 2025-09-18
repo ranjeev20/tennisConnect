@@ -1,0 +1,66 @@
+<div class="profile-card" [class.dark-theme]="false">
+  <div class="profile-header">
+    <div class="profile-image">
+      <img 
+        [src]="profile.profileImage || 'assets/images/default-profile.svg'" 
+        [alt]="profile.firstName + ' ' + profile.lastName"
+        loading="lazy"
+        (error)="onImageError($event)"
+        (load)="onImageLoad($event)"
+      >
+      <div class="skill-badge" [style.background-color]="getSkillLevelColor(profile.tennisProfile.skillLevel)">
+        {{ profile.tennisProfile.skillLevel | titlecase }}
+      </div>
+    </div>
+    <div class="profile-info">
+      <h3 class="player-name">{{ profile.firstName }} {{ profile.lastName }}</h3>
+      <p class="location">
+        <i class="icon-location"></i>
+        {{ profile.location.city }}, {{ profile.location.country }}
+      </p>
+      <div class="rating">
+        <span class="rating-label">Overall Rating:</span>
+        <span class="rating-value">{{ getAverageSkill() }}/10</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-stats">
+    <div class="stat-item">
+      <span class="stat-label">Experience</span>
+      <span class="stat-value">{{ profile.tennisProfile.experience }} years</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Style</span>
+      <span class="stat-value">{{ profile.tennisProfile.playingStyle | titlecase }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Surface</span>
+      <span class="stat-value">{{ profile.tennisProfile.preferredSurface | titlecase }}</span>
+    </div>
+  </div>
+
+  <div class="skill-breakdown">
+    <h4>Skill Breakdown</h4>
+    <div class="skill-bars">
+      <div class="skill-bar" *ngFor="let skill of getSkillItems()">
+        <span class="skill-name">{{ skill.name | titlecase }}</span>
+        <div class="skill-progress">
+          <div class="skill-fill" [style.width.%]="skill.value * 10"></div>
+        </div>
+        <span class="skill-value">{{ skill.value }}/10</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-actions" *ngIf="showActions">
+    <button class="btn btn-primary" (click)="onViewProfile()">
+      <i class="icon-eye"></i>
+      View Profile
+    </button>
+    <button class="btn btn-secondary" (click)="onContactPlayer()">
+      <i class="icon-message"></i>
+      Contact
+    </button>
+  </div>
+</div>

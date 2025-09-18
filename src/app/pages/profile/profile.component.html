@@ -1,0 +1,298 @@
+<app-header></app-header>
+
+<main class="profile-page">
+  <div class="container">
+    <!-- Page Title -->
+    <div class="page-title">
+      <h1 *ngIf="isViewingOwnProfile">My Profile</h1>
+      <h1 *ngIf="!isViewingOwnProfile && profile">{{ profile.firstName }}'s Profile</h1>
+    </div>
+
+    <!-- Breadcrumb Navigation (only when viewing other profiles) -->
+    <nav *ngIf="!isViewingOwnProfile" class="breadcrumb">
+      <a routerLink="/find-partner" class="breadcrumb-link">
+        <svg class="breadcrumb-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to Find Partners
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">Profile</span>
+    </nav>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading profile...</p>
+    </div>
+
+    <!-- Login Prompt for Non-Authenticated Users -->
+    <div *ngIf="!isLoading && profile && !isAuthenticated() && !isViewingOwnProfile" class="login-prompt">
+      <div class="login-prompt-content">
+        <h3>🔒 More Details Available</h3>
+        <p>Log in to view personal information, partner preferences, and activity details.</p>
+        <a routerLink="/login" class="btn btn-primary">Log In</a>
+      </div>
+    </div>
+
+    <!-- Profile Content (only show when not loading) -->
+    <div *ngIf="!isLoading && profile" class="profile-content-wrapper">
+      <!-- Profile Header -->
+      <div class="profile-header">
+      <div class="profile-avatar">
+        <img 
+          [src]="profile.profileImage || 'assets/images/default-profile.svg'" 
+          [alt]="profile.firstName + ' ' + profile.lastName"
+          class="avatar-image"
+        >
+        <button *ngIf="isViewingOwnProfile" class="edit-avatar-btn" (click)="editProfileImage()">
+          📷
+        </button>
+      </div>
+      
+      <div class="profile-info">
+        <h1>{{ profile.firstName }} {{ profile.lastName }}</h1>
+        <p class="profile-location">
+          📍 {{ profile.location.city }}, {{ profile.location.country }}
+        </p>
+        <div class="profile-stats">
+          <span class="stat-item">
+            <strong>{{ profile.tennisProfile.experience }}</strong> years experience
+          </span>
+          <span class="stat-item">
+            <strong>{{ profile.tennisProfile.skillLevel | titlecase }}</strong> level
+          </span>
+          <span class="stat-item">
+            <strong>{{ profile.tennisProfile.playingStyle | titlecase }}</strong> style
+          </span>
+        </div>
+      </div>
+      
+      <div class="profile-actions">
+        <!-- Actions for own profile -->
+        <ng-container *ngIf="isViewingOwnProfile">
+          <button class="btn btn-primary" (click)="editProfile()">
+            ✏️ Edit Profile
+          </button>
+          <button class="btn btn-secondary" (click)="shareProfile()">
+            🔗 Share
+          </button>
+        </ng-container>
+        
+        <!-- Actions for other profiles -->
+        <ng-container *ngIf="!isViewingOwnProfile">
+          <button class="btn btn-primary" (click)="contactProfile()">
+            💬 Contact
+          </button>
+          <button class="btn btn-secondary" (click)="sendMatchRequest()">
+            🎾 Send Match Request
+          </button>
+          <button class="btn btn-outline" (click)="shareProfile()">
+            🔗 Share
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="profile-content">
+      <!-- Personal Information Section (for own profile or logged-in users) -->
+      <section *ngIf="isViewingOwnProfile || isAuthenticated()" class="profile-section">
+        <div class="section-header">
+          <h2>Personal Information</h2>
+          <div class="section-actions">
+            <span *ngIf="!isViewingOwnProfile" class="view-only-indicator">View Only</span>
+            <button *ngIf="isViewingOwnProfile" class="edit-section-btn" (click)="editPersonalInfo()">
+              ✏️
+            </button>
+          </div>
+        </div>
+        
+        <div class="section-content">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Full Name</label>
+              <span>{{ profile.firstName }} {{ profile.lastName }}</span>
+            </div>
+            <div class="info-item">
+              <label>Email</label>
+              <span>{{ profile.email }}</span>
+            </div>
+            <div class="info-item">
+              <label>Phone</label>
+              <span>{{ profile.phone || 'Not provided' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Date of Birth</label>
+              <span>{{ profile.dateOfBirth ? (profile.dateOfBirth | date:'mediumDate') : 'Not provided' }}</span>
+            </div>
+            <div class="info-item">
+              <label>City</label>
+              <span>{{ profile.location.city }}</span>
+            </div>
+            <div class="info-item">
+              <label>Postal Code</label>
+              <span>{{ profile.location.postalCode || 'Not provided' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Country</label>
+              <span>{{ profile.location.country }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tennis Profile Section -->
+      <section class="profile-section">
+        <div class="section-header">
+          <h2>Tennis Profile</h2>
+          <button *ngIf="isViewingOwnProfile" class="edit-section-btn" (click)="editTennisProfile()">
+            ✏️
+          </button>
+        </div>
+        
+        <div class="section-content">
+          <div class="tennis-overview">
+            <div class="overview-item">
+              <label>Skill Level</label>
+              <span class="skill-badge" [class]="'skill-' + profile.tennisProfile.skillLevel">
+                {{ profile.tennisProfile.skillLevel | titlecase }}
+              </span>
+            </div>
+            <div class="overview-item">
+              <label>Playing Style</label>
+              <span>{{ profile.tennisProfile.playingStyle | titlecase }}</span>
+            </div>
+            <div class="overview-item">
+              <label>Preferred Surface</label>
+              <span>{{ profile.tennisProfile.preferredSurface | titlecase }}</span>
+            </div>
+            <div class="overview-item">
+              <label>Experience</label>
+              <span>{{ profile.tennisProfile.experience }} years</span>
+            </div>
+          </div>
+
+          <!-- Skill Breakdown -->
+          <div class="skill-breakdown">
+            <h3>Skill Breakdown</h3>
+            <div class="skill-bars">
+              <div class="skill-bar" *ngFor="let skill of getSkillItems()">
+                <div class="skill-info">
+                  <span class="skill-name">{{ skill.name | titlecase }}</span>
+                  <span class="skill-value">{{ skill.value }}/10</span>
+                </div>
+                <div class="skill-progress">
+                  <div class="skill-fill" [style.width.%]="skill.value * 10"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Availability -->
+          <div class="availability-section">
+            <h3>Availability</h3>
+            <div class="availability-grid">
+                          <div class="availability-item" [class.available]="profile.tennisProfile.availability.weekdays">
+              📅 <span>Weekdays</span>
+            </div>
+            <div class="availability-item" [class.available]="profile.tennisProfile.availability.weekends">
+              📅 <span>Weekends</span>
+            </div>
+            <div class="availability-item" [class.available]="profile.tennisProfile.availability.evenings">
+              🕐 <span>Evenings</span>
+            </div>
+            <div class="availability-item" [class.available]="profile.tennisProfile.availability.mornings">
+              🕐 <span>Mornings</span>
+            </div>
+            </div>
+          </div>
+
+          <!-- About Me -->
+          <div class="about-section" *ngIf="profile.tennisProfile.aboutMe">
+            <h3>About Me</h3>
+            <p class="about-text">{{ profile.tennisProfile.aboutMe }}</p>
+          </div>
+
+          <!-- Interests -->
+          <div class="interests-section">
+            <h3>Interests</h3>
+            <div class="interests-grid">
+                          <div class="interest-item" [class.active]="profile.tennisProfile.tournaments">
+              🏆 <span>Tournaments</span>
+            </div>
+            <div class="interest-item" [class.active]="profile.tennisProfile.coaching">
+              👨‍🏫 <span>Coaching</span>
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Partner Preferences Section (for own profile or logged-in users) -->
+      <section *ngIf="isViewingOwnProfile || isAuthenticated()" class="profile-section">
+        <div class="section-header">
+          <h2>Partner Preferences</h2>
+          <div class="section-actions">
+            <span *ngIf="!isViewingOwnProfile" class="view-only-indicator">View Only</span>
+            <button *ngIf="isViewingOwnProfile" class="edit-section-btn" (click)="editPreferences()">
+              ✏️
+            </button>
+          </div>
+        </div>
+        
+        <div class="section-content">
+          <div class="preferences-grid">
+            <div class="preference-item">
+              <label>Age Range</label>
+              <span>{{ profile.preferences.partnerAgeRange?.min || 18 }} - {{ profile.preferences.partnerAgeRange?.max || 80 }} years</span>
+            </div>
+            <div class="preference-item">
+              <label>Skill Level</label>
+              <span>{{ profile.preferences.partnerSkillLevel | titlecase }}</span>
+            </div>
+            <div class="preference-item">
+              <label>Maximum Distance</label>
+              <span>{{ profile.preferences.maxDistance || 25 }} km</span>
+            </div>
+            <div class="preference-item">
+              <label>Gender Preference</label>
+              <span>{{ profile.preferences.genderPreference | titlecase }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity Section (for own profile or logged-in users) -->
+      <section *ngIf="isViewingOwnProfile || isAuthenticated()" class="profile-section">
+        <div class="section-header">
+          <h2>Recent Activity</h2>
+        </div>
+        
+        <div class="section-content">
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon">
+                👤
+              </div>
+              <div class="activity-content">
+                <p>Profile updated</p>
+                <span class="activity-time">{{ profile.updatedAt ? (profile.updatedAt | date:'medium') : 'Recently' }}</span>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">
+                📅
+              </div>
+              <div class="activity-content">
+                <p>Joined TennisConnect</p>
+                <span class="activity-time">{{ profile.createdAt ? (profile.createdAt | date:'medium') : 'Recently' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    </div>
+  </div>
+</main>

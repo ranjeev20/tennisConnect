@@ -1,0 +1,242 @@
+<app-header></app-header>
+
+<main class="find-partner-page">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Find Your Tennis Partner</h1>
+      <p>Connect with players who match your skill level, location, and playing preferences</p>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="search-section">
+      <div class="search-bar">
+        <div class="search-input-group">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            placeholder="Search by name, location, or skill level..."
+            [(ngModel)]="searchQuery"
+            (input)="onSearchChange()"
+            class="search-input"
+          >
+        </div>
+        <button class="search-btn" (click)="performSearch()">
+          Search
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section">
+        <div class="filter-group">
+          <label>Skill Level</label>
+          <select [(ngModel)]="selectedSkillLevel" (change)="applyFilters()">
+            <option value="">All Levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+            <option value="expert">Expert</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Location</label>
+          <select [(ngModel)]="selectedLocation" (change)="applyFilters()">
+            <option value="">All Locations</option>
+            <option value="Rotterdam">Rotterdam</option>
+            <option value="Amsterdam">Amsterdam</option>
+            <option value="Utrecht">Utrecht</option>
+            <option value="The Hague">The Hague</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Playing Style</label>
+          <select [(ngModel)]="selectedPlayingStyle" (change)="applyFilters()">
+            <option value="">All Styles</option>
+            <option value="aggressive">Aggressive</option>
+            <option value="all-around">All-around</option>
+            <option value="serve-and-volley">Serve & Volley</option>
+            <option value="defensive">Defensive</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Max Distance</label>
+          <select [(ngModel)]="selectedMaxDistance" (change)="applyFilters()">
+            <option value="5">5 km</option>
+            <option value="10">10 km</option>
+            <option value="25" selected>25 km</option>
+            <option value="50">50 km</option>
+            <option value="100">100 km</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Availability</label>
+          <div class="availability-filters">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="filters.weekdays" (change)="applyFilters()">
+              Weekdays
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="filters.weekends" (change)="applyFilters()">
+              Weekends
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="filters.evenings" (change)="applyFilters()">
+              Evenings
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="filters.mornings" (change)="applyFilters()">
+              Mornings
+            </label>
+          </div>
+        </div>
+
+        <button class="clear-filters-btn" (click)="clearFilters()">
+          Clear All Filters
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section">
+      <div class="results-header">
+        <h2>Available Partners</h2>
+        <div class="results-count">
+          {{ filteredPartners.length }} partner{{ filteredPartners.length !== 1 ? 's' : '' }} found
+        </div>
+      </div>
+
+      <!-- Action Feedback Message (only for successful actions) -->
+      <div *ngIf="showActionMessage && actionType !== 'error'" class="action-feedback" [class]="'action-' + actionType">
+        <div class="feedback-content">
+          <span class="feedback-icon">
+            <span *ngIf="actionType === 'success'">✅</span>
+            <span *ngIf="actionType === 'info'">ℹ️</span>
+          </span>
+          <span class="feedback-message">{{ actionMessage }}</span>
+          <button class="feedback-close" (click)="showActionMessage = false">×</button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Searching for partners...</p>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="!isLoading && filteredPartners.length === 0" class="no-results">
+        <div class="no-results-icon">🎾</div>
+        <h3>No partners found</h3>
+        <p>Try adjusting your search criteria or expanding your search radius</p>
+        <button class="btn btn-primary" (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+
+      <!-- Partner Cards Grid -->
+      <div *ngIf="!isLoading && filteredPartners.length > 0" class="partners-grid">
+        <div 
+          *ngFor="let partner of filteredPartners; trackBy: trackByPartnerId" 
+          class="partner-card"
+        >
+          <div class="partner-header">
+            <div class="partner-avatar">
+              <img 
+                [src]="partner.profileImage || 'assets/images/default-profile.svg'" 
+                [alt]="partner.firstName + ' ' + partner.lastName"
+                class="avatar-image"
+              >
+              <div class="skill-badge" [class]="'skill-' + partner.tennisProfile.skillLevel">
+                {{ partner.tennisProfile.skillLevel | titlecase }}
+              </div>
+            </div>
+            <div class="partner-info">
+              <h3 class="partner-name">{{ partner.firstName }} {{ partner.lastName }}</h3>
+              <p class="partner-location">
+                📍 {{ partner.location.city }}, {{ partner.location.country }}
+              </p>
+              <div class="partner-stats">
+                <span class="stat">
+                  <strong>{{ partner.tennisProfile.experience }}</strong> years
+                </span>
+                <span class="stat">
+                  <strong>{{ partner.tennisProfile.playingStyle | titlecase }}</strong> style
+                </span>
+                <span class="stat">
+                  <strong>{{ partner.tennisProfile.preferredSurface | titlecase }}</strong> court
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="partner-details">
+            <div class="skill-rating">
+              <span class="rating-label">Overall Rating:</span>
+              <span class="rating-value">{{ getAverageSkill(partner) }}/10</span>
+            </div>
+
+            <div class="availability">
+              <h4>Availability</h4>
+              <div class="availability-tags">
+                <span *ngIf="partner.tennisProfile.availability.weekdays" class="availability-tag">Weekdays</span>
+                <span *ngIf="partner.tennisProfile.availability.weekends" class="availability-tag">Weekends</span>
+                <span *ngIf="partner.tennisProfile.availability.evenings" class="availability-tag">Evenings</span>
+                <span *ngIf="partner.tennisProfile.availability.mornings" class="availability-tag">Mornings</span>
+              </div>
+            </div>
+
+            <div *ngIf="partner.tennisProfile.aboutMe" class="about-section">
+              <h4>About</h4>
+              <p class="about-text">{{ partner.tennisProfile.aboutMe }}</p>
+            </div>
+          </div>
+
+          <div class="partner-actions">
+            <button class="btn btn-primary" (click)="viewProfile(partner.id)" [disabled]="isProfileLoading(partner.id)">
+              👁️ View Profile
+            </button>
+            <button class="btn btn-secondary" (click)="contactPartner(partner.id)" [disabled]="isProfileLoading(partner.id)">
+              <span *ngIf="isProfileLoading(partner.id)" class="loading-spinner-small"></span>
+              💬 Contact
+            </button>
+            <button class="btn btn-outline" (click)="sendMatchRequest(partner.id)" [disabled]="isProfileLoading(partner.id)">
+              <span *ngIf="isProfileLoading(partner.id)" class="loading-spinner-small"></span>
+              🤝 Send Match Request
+            </button>
+          </div>
+
+          <!-- Contextual Login Prompt -->
+          <div *ngIf="showLoginPromptFor === partner.id" class="login-prompt-card">
+            <div class="login-prompt-content">
+              <div class="login-prompt-header">
+                <span class="login-icon">🔒</span>
+                <h4>Login Required</h4>
+                <button class="close-btn" (click)="closeLoginPrompt()">×</button>
+              </div>
+              <p class="login-message">{{ getLoginPromptMessage() }}</p>
+              <div class="login-actions">
+                <button class="btn btn-primary" (click)="proceedToLogin()">
+                  Log In
+                </button>
+                <button class="btn btn-outline" (click)="closeLoginPrompt()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Load More Button -->
+      <div *ngIf="!isLoading && filteredPartners.length > 0 && hasMoreResults" class="load-more-section">
+        <button class="btn btn-outline load-more-btn" (click)="loadMorePartners()" [disabled]="isActionLoading">
+          Load More Partners
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

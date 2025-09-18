@@ -1,0 +1,437 @@
+<app-header></app-header>
+
+<main class="register-page">
+  <div class="container">
+    <div class="register-header">
+      <h1>Join TennisConnect</h1>
+      <p>Create your account and start connecting with tennis players in Rotterdam</p>
+    </div>
+
+    <div class="register-form-container">
+      <div class="form-progress">
+        <div class="progress-step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+          <span class="step-number">1</span>
+          <span class="step-label">Account</span>
+        </div>
+        <div class="progress-step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+          <span class="step-number">2</span>
+          <span class="step-label">Personal</span>
+        </div>
+        <div class="progress-step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3">
+          <span class="step-number">3</span>
+          <span class="step-label">Tennis</span>
+        </div>
+        <div class="progress-step" [class.active]="currentStep >= 4" [class.completed]="currentStep > 4">
+          <span class="step-number">4</span>
+          <span class="step-label">Preferences</span>
+        </div>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <!-- Step 1: Account Information -->
+        <div class="form-step" *ngIf="currentStep === 1">
+          <h2>Account Information</h2>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              placeholder="Enter your email"
+              [class.error]="isFieldInvalid('email')"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('email')">
+              Please enter a valid email address
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password *</label>
+            <div class="password-input-container">
+              <input 
+                [type]="showPassword ? 'text' : 'password'" 
+                id="password" 
+                formControlName="password" 
+                placeholder="Create a password"
+                [class.error]="isFieldInvalid('password')"
+              >
+              <button 
+                type="button" 
+                class="password-toggle-btn" 
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+              >
+                <svg *ngIf="!showPassword" class="eye-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg *ngIf="showPassword" class="eye-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C5 20 1 12 1 12A18.45 18.45 0 0 1 5.06 5.06L17.94 17.94Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4C19 4 23 12 23 12A18.5 18.5 0 0 1 19.24 19.24L9.9 4.24Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M1 1L23 23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="error-message" *ngIf="isFieldInvalid('password')">
+              Password must be at least 8 characters
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password *</label>
+            <div class="password-input-container">
+              <input 
+                [type]="showConfirmPassword ? 'text' : 'password'" 
+                id="confirmPassword" 
+                formControlName="confirmPassword" 
+                placeholder="Confirm your password"
+                [class.error]="isFieldInvalid('confirmPassword') || hasPasswordMismatch()"
+              >
+              <button 
+                type="button" 
+                class="password-toggle-btn" 
+                (click)="toggleConfirmPasswordVisibility()"
+                [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+              >
+                <svg *ngIf="!showConfirmPassword" class="eye-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg *ngIf="showConfirmPassword" class="eye-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20C5 20 1 12 1 12A18.45 18.45 0 0 1 5.06 5.06L17.94 17.94Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4C19 4 23 12 23 12A18.5 18.5 0 0 1 19.24 19.24L9.9 4.24Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M1 1L23 23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="error-message" *ngIf="isFieldInvalid('confirmPassword') || hasPasswordMismatch()">
+              Passwords do not match
+            </div>
+            <div class="success-message" *ngIf="passwordsMatch() && !hasPasswordMismatch()">
+              ✅ Passwords match
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Personal Information -->
+        <div class="form-step" *ngIf="currentStep === 2">
+          <h2>Personal Information</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input 
+                type="text" 
+                id="firstName" 
+                formControlName="firstName" 
+                placeholder="Enter your first name"
+                [class.error]="isFieldInvalid('firstName')"
+              >
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input 
+                type="text" 
+                id="lastName" 
+                formControlName="lastName" 
+                placeholder="Enter your last name"
+                [class.error]="isFieldInvalid('lastName')"
+              >
+            </div>
+          </div>
+
+          <!-- Profile Image Upload -->
+          <div class="form-group">
+            <label>Profile Picture</label>
+            <div class="image-upload-container">
+              <div class="image-preview" [class.has-image]="profileImagePreview">
+                <img *ngIf="profileImagePreview" [src]="profileImagePreview" alt="Profile preview" class="preview-image">
+                <div *ngIf="!profileImagePreview" class="placeholder-image">
+                  <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="placeholder-text">No image selected</span>
+                </div>
+                <button type="button" class="remove-image-btn" *ngIf="profileImagePreview" (click)="removeImage()">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="upload-actions">
+                <input 
+                  type="file" 
+                  id="profileImage" 
+                  accept="image/*" 
+                  (change)="onImageSelected($event)"
+                  class="file-input"
+                  #fileInput
+                >
+                <button type="button" class="btn btn-outline upload-btn" (click)="fileInput.click()">
+                  <svg class="upload-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Choose Image
+                </button>
+                <span class="upload-hint">JPG, PNG or GIF. Max 5MB</span>
+              </div>
+              
+              <div class="error-message" *ngIf="imageError">
+                {{ imageError }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              formControlName="phone" 
+              placeholder="Enter your phone number"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="dateOfBirth">Date of Birth</label>
+            <input 
+              type="date" 
+              id="dateOfBirth" 
+              formControlName="dateOfBirth"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="city">City *</label>
+            <input 
+              type="text" 
+              id="city" 
+              formControlName="city" 
+              placeholder="Enter your city"
+              [class.error]="isFieldInvalid('city')"
+            >
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="postalCode">Postal Code</label>
+              <input 
+                type="text" 
+                id="postalCode" 
+                formControlName="postalCode" 
+                placeholder="Enter postal code"
+              >
+            </div>
+            <div class="form-group">
+              <label for="country">Country *</label>
+              <select id="country" formControlName="country" [class.error]="isFieldInvalid('country')">
+                <option value="">Select country</option>
+                <option value="Netherlands">Netherlands</option>
+                <option value="Belgium">Belgium</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Tennis Profile -->
+        <div class="form-step" *ngIf="currentStep === 3">
+          <h2>Tennis Profile</h2>
+          <div class="form-group">
+            <label for="skillLevel">Skill Level *</label>
+            <select id="skillLevel" formControlName="skillLevel" [class.error]="isFieldInvalid('skillLevel')">
+              <option value="">Select your skill level</option>
+              <option value="beginner">Beginner (0-2 years)</option>
+              <option value="intermediate">Intermediate (2-5 years)</option>
+              <option value="advanced">Advanced (5-10 years)</option>
+              <option value="expert">Expert (10+ years)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="playingStyle">Playing Style *</label>
+            <select id="playingStyle" formControlName="playingStyle" [class.error]="isFieldInvalid('playingStyle')">
+              <option value="">Select your playing style</option>
+              <option value="aggressive">Aggressive</option>
+              <option value="defensive">Defensive</option>
+              <option value="all-around">All-around</option>
+              <option value="serve-and-volley">Serve and Volley</option>
+              <option value="baseline">Baseline</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="preferredSurface">Preferred Surface *</label>
+            <select id="preferredSurface" formControlName="preferredSurface" [class.error]="isFieldInvalid('preferredSurface')">
+              <option value="">Select preferred surface</option>
+              <option value="hard">Hard Court</option>
+              <option value="clay">Clay Court</option>
+              <option value="grass">Grass Court</option>
+              <option value="indoor">Indoor</option>
+              <option value="any">Any Surface</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Availability *</label>
+            <div class="checkbox-group">
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="weekdays">
+                <span>Weekdays</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="weekends">
+                <span>Weekends</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="evenings">
+                <span>Evenings</span>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" formControlName="mornings">
+                <span>Mornings</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="experience">Years of Experience *</label>
+            <input 
+              type="number" 
+              id="experience" 
+              formControlName="experience" 
+              min="0" 
+              max="50"
+              placeholder="Enter years of experience"
+              [class.error]="isFieldInvalid('experience')"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="aboutMe">About Me</label>
+            <textarea 
+              id="aboutMe" 
+              formControlName="aboutMe" 
+              rows="4"
+              placeholder="Tell us about your tennis journey, goals, and what you're looking for in a partner..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Step 4: Partner Preferences -->
+        <div class="form-step" *ngIf="currentStep === 4">
+          <h2>Partner Preferences</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="minAge">Minimum Age</label>
+              <input 
+                type="number" 
+                id="minAge" 
+                formControlName="minAge" 
+                min="18" 
+                max="80"
+                placeholder="Min age"
+              >
+            </div>
+            <div class="form-group">
+              <label for="maxAge">Maximum Age</label>
+              <input 
+                type="number" 
+                id="maxAge" 
+                formControlName="maxAge" 
+                min="18" 
+                max="80"
+                placeholder="Max age"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="partnerSkillLevel">Preferred Partner Skill Level</label>
+            <select id="partnerSkillLevel" formControlName="partnerSkillLevel">
+              <option value="any">Any Skill Level</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+              <option value="expert">Expert</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="maxDistance">Maximum Distance (km)</label>
+            <input 
+              type="number" 
+              id="maxDistance" 
+              formControlName="maxDistance" 
+              min="1" 
+              max="100"
+              placeholder="Enter max distance"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="genderPreference">Gender Preference</label>
+            <select id="genderPreference" formControlName="genderPreference">
+              <option value="any">Any Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="tournaments">
+              <span>Interested in tournaments</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-item">
+              <input type="checkbox" formControlName="coaching">
+              <span>Interested in coaching</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Form Navigation -->
+        <div class="form-navigation">
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            *ngIf="currentStep > 1"
+            (click)="previousStep()"
+          >
+            Previous
+          </button>
+          
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            *ngIf="currentStep < 4"
+            (click)="nextStep()"
+            [disabled]="!isCurrentStepValid()"
+          >
+            Next
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            *ngIf="currentStep === 4"
+            [disabled]="!registerForm.valid || isSubmitting"
+          >
+            <span *ngIf="!isSubmitting">Create Account</span>
+            <span *ngIf="isSubmitting">Creating Account...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

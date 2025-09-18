@@ -1,0 +1,375 @@
+<app-header></app-header>
+
+<main class="profile-creation-page">
+  <div class="container">
+    <!-- Progress Bar -->
+    <div class="progress-section">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getStepProgress()"></div>
+      </div>
+      <div class="step-indicators">
+        <div 
+          *ngFor="let step of [1, 2, 3, 4]" 
+          class="step-indicator"
+          [class.active]="step === currentStep"
+          [class.completed]="step < currentStep"
+          (click)="goToStep(step)"
+        >
+          <span class="step-number">{{ step }}</span>
+          <span class="step-title">{{ getStepTitle(step) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+      <div class="form-header">
+        <h1>{{ getStepTitle(currentStep) }}</h1>
+        <p>{{ getStepDescription(currentStep) }}</p>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+        
+        <!-- Step 1: Personal Information -->
+        <div *ngIf="currentStep === 1" class="form-step" formGroupName="personalInfo">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input 
+                type="text" 
+                id="firstName" 
+                formControlName="firstName"
+                placeholder="Enter your first name"
+                [class.error]="profileForm.get('personalInfo.firstName')?.invalid && profileForm.get('personalInfo.firstName')?.touched"
+              >
+              <div class="error-message" *ngIf="profileForm.get('personalInfo.firstName')?.invalid && profileForm.get('personalInfo.firstName')?.touched">
+                First name is required and must be at least 2 characters
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input 
+                type="text" 
+                id="lastName" 
+                formControlName="lastName"
+                placeholder="Enter your last name"
+                [class.error]="profileForm.get('personalInfo.lastName')?.invalid && profileForm.get('personalInfo.lastName')?.touched"
+              >
+              <div class="error-message" *ngIf="profileForm.get('personalInfo.lastName')?.invalid && profileForm.get('personalInfo.lastName')?.touched">
+                Last name is required and must be at least 2 characters
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input 
+                type="email" 
+                id="email" 
+                formControlName="email"
+                placeholder="Enter your email address"
+                [class.error]="profileForm.get('personalInfo.email')?.invalid && profileForm.get('personalInfo.email')?.touched"
+              >
+              <div class="error-message" *ngIf="profileForm.get('personalInfo.email')?.invalid && profileForm.get('personalInfo.email')?.touched">
+                Please enter a valid email address
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input 
+                type="tel" 
+                id="phone" 
+                formControlName="phone"
+                placeholder="Enter your phone number"
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dateOfBirth">Date of Birth</label>
+            <input 
+              type="date" 
+              id="dateOfBirth" 
+              formControlName="dateOfBirth"
+            >
+          </div>
+        </div>
+
+        <!-- Step 2: Location -->
+        <div *ngIf="currentStep === 2" class="form-step" formGroupName="location">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City *</label>
+              <input 
+                type="text" 
+                id="city" 
+                formControlName="city"
+                placeholder="Enter your city"
+                [class.error]="profileForm.get('location.city')?.invalid && profileForm.get('location.city')?.touched"
+              >
+              <div class="error-message" *ngIf="profileForm.get('location.city')?.invalid && profileForm.get('location.city')?.touched">
+                City is required
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="postalCode">Postal Code *</label>
+              <input 
+                type="text" 
+                id="postalCode" 
+                formControlName="postalCode"
+                placeholder="Enter postal code"
+                [class.error]="profileForm.get('location.postalCode')?.invalid && profileForm.get('location.postalCode')?.touched"
+              >
+              <div class="error-message" *ngIf="profileForm.get('location.postalCode')?.invalid && profileForm.get('location.postalCode')?.touched">
+                Postal code is required
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="country">Country *</label>
+            <select id="country" formControlName="country">
+              <option value="Netherlands">Netherlands</option>
+              <option value="Belgium">Belgium</option>
+              <option value="Germany">Germany</option>
+              <option value="France">France</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 3: Tennis Profile -->
+        <div *ngIf="currentStep === 3" class="form-step" formGroupName="tennisProfile">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="skillLevel">Skill Level *</label>
+              <div class="radio-group">
+                <div 
+                  *ngFor="let level of skillLevels" 
+                  class="radio-option"
+                  [class.selected]="profileForm.get('tennisProfile.skillLevel')?.value === level.value"
+                >
+                  <input 
+                    type="radio" 
+                    [id]="'skill-' + level.value" 
+                    [value]="level.value" 
+                    formControlName="skillLevel"
+                  >
+                  <label [for]="'skill-' + level.value">
+                    <span class="radio-label">{{ level.label }}</span>
+                    <span class="radio-description">{{ level.description }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="playingStyle">Playing Style *</label>
+              <div class="radio-group">
+                <div 
+                  *ngFor="let style of playingStyles" 
+                  class="radio-option"
+                  [class.selected]="profileForm.get('tennisProfile.playingStyle')?.value === style.value"
+                >
+                  <input 
+                    type="radio" 
+                    [id]="'style-' + style.value" 
+                    [value]="style.value" 
+                    formControlName="playingStyle"
+                  >
+                  <label [for]="'style-' + style.value">
+                    <span class="radio-label">{{ style.label }}</span>
+                    <span class="radio-description">{{ style.description }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="preferredSurface">Preferred Surface *</label>
+            <div class="radio-group">
+              <div 
+                *ngFor="let surface of surfaces" 
+                class="radio-option"
+                [class.selected]="profileForm.get('tennisProfile.preferredSurface')?.value === surface.value"
+              >
+                <input 
+                  type="radio" 
+                  [id]="'surface-' + surface.value" 
+                  [value]="surface.value" 
+                  formControlName="preferredSurface"
+                >
+                <label [for]="'surface-' + surface.value">
+                  <span class="radio-label">{{ surface.label }}</span>
+                  <span class="radio-description">{{ surface.description }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Availability</label>
+            <div class="checkbox-group" formGroupName="availability">
+              <div class="checkbox-option">
+                <input type="checkbox" id="weekdays" formControlName="weekdays">
+                <label for="weekdays">Weekdays</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="weekends" formControlName="weekends">
+                <label for="weekends">Weekends</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="evenings" formControlName="evenings">
+                <label for="evenings">Evenings</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="mornings" formControlName="mornings">
+                <label for="mornings">Mornings</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Skill Breakdown (1-10)</label>
+            <div class="skill-sliders" formGroupName="skillBreakdown">
+              <div class="skill-slider" *ngFor="let skill of ['technique', 'strategy', 'fitness', 'mental', 'serve', 'forehand', 'backhand', 'volley']">
+                <label [for]="skill">{{ skill | titlecase }}</label>
+                <div class="slider-container">
+                  <input 
+                    type="range" 
+                    [id]="skill" 
+                    [formControlName]="skill"
+                    min="1" 
+                    max="10" 
+                    class="slider"
+                  >
+                  <span class="slider-value">{{ profileForm.get('tennisProfile.skillBreakdown.' + skill)?.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="experience">Years of Experience *</label>
+              <input 
+                type="number" 
+                id="experience" 
+                formControlName="experience"
+                min="0" 
+                max="50"
+                [class.error]="profileForm.get('tennisProfile.experience')?.invalid && profileForm.get('tennisProfile.experience')?.touched"
+              >
+            </div>
+            <div class="form-group">
+              <label for="aboutMe">About Me</label>
+              <textarea 
+                id="aboutMe" 
+                formControlName="aboutMe"
+                placeholder="Tell us about your tennis journey..."
+                rows="4"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Preferences -->
+        <div *ngIf="currentStep === 4" class="form-step" formGroupName="preferences">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Partner Age Range *</label>
+              <div class="age-range" formGroupName="partnerAgeRange">
+                <input 
+                  type="number" 
+                  formControlName="min"
+                  min="16" 
+                  max="80"
+                  placeholder="Min age"
+                >
+                <span class="range-separator">to</span>
+                <input 
+                  type="number" 
+                  formControlName="max"
+                  min="16" 
+                  max="80"
+                  placeholder="Max age"
+                >
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="partnerSkillLevel">Partner Skill Level</label>
+              <select id="partnerSkillLevel" formControlName="partnerSkillLevel">
+                <option value="any">Any Level</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="expert">Expert</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="maxDistance">Maximum Distance (km) *</label>
+              <input 
+                type="number" 
+                id="maxDistance" 
+                formControlName="maxDistance"
+                min="1" 
+                max="100"
+                placeholder="25"
+              >
+            </div>
+            <div class="form-group">
+              <label for="genderPreference">Gender Preference</label>
+              <select id="genderPreference" formControlName="genderPreference">
+                <option value="any">Any Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="form-navigation">
+          <button 
+            type="button" 
+            class="btn btn-secondary" 
+            (click)="previousStep()"
+            [disabled]="currentStep === 1"
+            *ngIf="currentStep > 1"
+          >
+            Previous
+          </button>
+          
+          <div class="navigation-right">
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              (click)="nextStep()"
+              [disabled]="!isCurrentStepValid() || currentStep === totalSteps"
+              *ngIf="currentStep < totalSteps"
+            >
+              Next
+            </button>
+            
+            <button 
+              type="submit" 
+              class="btn btn-success" 
+              [disabled]="!profileForm.valid || isLoading"
+              *ngIf="currentStep === totalSteps"
+            >
+              <span *ngIf="!isLoading">Create Profile</span>
+              <span *ngIf="isLoading">Creating...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
