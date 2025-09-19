@@ -174,7 +174,20 @@ export class DemoDataService {
     ];
   }
 
-  getDemoProfile(): UserProfile {
-    return this.getDemoProfiles()[0];
+  getDemoProfile(): UserProfile | null {
+    // Get current user from localStorage
+    if (typeof window !== 'undefined' && localStorage) {
+      const currentUser = localStorage.getItem('currentUser');
+      if (currentUser) {
+        try {
+          const user = JSON.parse(currentUser);
+          const profile = this.getDemoProfiles().find(p => p.id === user.id);
+          return profile || null;
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
   }
 }

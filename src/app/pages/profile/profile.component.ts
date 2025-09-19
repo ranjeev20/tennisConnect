@@ -45,6 +45,14 @@ export class ProfileComponent implements OnInit {
         // Load current user's profile if no ID provided
         this.profile = this.demoDataService.getDemoProfile();
         this.isViewingOwnProfile = true;
+        
+        // If no profile found, redirect to login
+        if (!this.profile) {
+          this.router.navigate(['/login'], { 
+            queryParams: { message: 'Please log in to view your profile' } 
+          });
+          return;
+        }
       }
       
       this.isLoading = false;
