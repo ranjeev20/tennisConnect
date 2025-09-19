@@ -1,6 +1,14 @@
-# TennisConnect
+# TennisConnect Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.1.
+A modern Angular application for connecting tennis players in Rotterdam. This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.1.
+
+## Features
+
+- User authentication (login/register)
+- Profile creation and management
+- Find tennis partners
+- Find tennis courts
+- Modern, responsive UI
 
 ## Development server
 
